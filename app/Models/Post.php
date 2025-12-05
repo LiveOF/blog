@@ -17,4 +17,10 @@ class Post extends Model
         });
     }
 
+    protected function displayBody(): Attribute {
+        return Attribute::get(function (){
+            return nl2br(htmlspecialchars($this->body));
+        });
+    }
+
 }
