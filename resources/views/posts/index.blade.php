@@ -1,6 +1,6 @@
 @extends('partials.layout')
 @section('content')
-    <a class="btn join-item btn-primary">New Post</a>
+    <a href="{{ route('posts.create') }}" class="btn join-item btn-primary">New Post</a>
     {{ $posts->links() }}
     <table class="table table-zebra">
         <thead>
