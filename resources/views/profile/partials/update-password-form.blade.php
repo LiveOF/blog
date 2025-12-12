@@ -1,47 +1,64 @@
-<section>
-    <header>
-        <h2 class="text-lg font-medium text-gray-900">
-            {{ __('Update Password') }}
+<section class="space-y-4">
+    <header class="space-y-1">
+        <h2 class="card-title text-xl">
+            {{ __('Profile Information') }}
         </h2>
 
-        <p class="mt-1 text-sm text-gray-600">
-            {{ __('Ensure your account is using a long, random password to stay secure.') }}
+        <p class="text-sm opacity-80">
+            {{ __("Update your account's profile information and email address.") }}
         </p>
     </header>
 
-    <form method="post" action="{{ route('password.update') }}" class="mt-6 space-y-6">
+    <form id="send-verification" method="post" action="{{ route('verification.send') }}">
         @csrf
-        @method('put')
+    </form>
 
-        <div>
-            <x-input-label for="update_password_current_password" :value="__('Current Password')" />
-            <x-text-input id="update_password_current_password" name="current_password" type="password" class="mt-1 block w-full" autocomplete="current-password" />
-            <x-input-error :messages="$errors->updatePassword->get('current_password')" class="mt-2" />
-        </div>
+    <form method="post" action="{{ route('profile.update') }}" class="space-y-4">
+        @csrf
+        @method('patch')
 
-        <div>
-            <x-input-label for="update_password_password" :value="__('New Password')" />
-            <x-text-input id="update_password_password" name="password" type="password" class="mt-1 block w-full" autocomplete="new-password" />
-            <x-input-error :messages="$errors->updatePassword->get('password')" class="mt-2" />
-        </div>
+        <fieldset class="fieldset">
+            <legend class="fieldset-legend">@lang('Name')</legend>
+            <input id="name" name="name" type="text" value="{{ old('name', $user->name) }}" required autofocus
+                autocomplete="name" class="input w-full @error('name') input-error @enderror" />
+            @error('name')
+                <p class="label text-error">{{ $message }}</p>
+            @enderror
+        </fieldset>
 
-        <div>
-            <x-input-label for="update_password_password_confirmation" :value="__('Confirm Password')" />
-            <x-text-input id="update_password_password_confirmation" name="password_confirmation" type="password" class="mt-1 block w-full" autocomplete="new-password" />
-            <x-input-error :messages="$errors->updatePassword->get('password_confirmation')" class="mt-2" />
-        </div>
+        <fieldset class="fieldset">
+            <legend class="fieldset-legend">@lang('Email')</legend>
+            <input id="email" name="email" type="email" value="{{ old('email', $user->email) }}" required
+                autocomplete="username" class="input w-full @error('email') input-error @enderror" />
+            @error('email')
+                <p class="label text-error">{{ $message }}</p>
+            @enderror
 
-        <div class="flex items-center gap-4">
-            <x-primary-button>{{ __('Save') }}</x-primary-button>
+            @if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! $user->hasVerifiedEmail())
+                <div class="alert alert-warning mt-2 flex flex-col gap-2">
+                    <span>{{ __('Your email address is unverified.') }}</span>
+                    <button form="send-verification" class="btn btn-sm btn-outline">
+                        {{ __('Click here to re-send the verification email.') }}
+                    </button>
 
-            @if (session('status') === 'password-updated')
-                <p
+                    @if (session('status') === 'verification-link-sent')
+                        <span class="text-success text-sm">{{ __('A new verification link has been sent to your email address.') }}</span>
+                    @endif
+                </div>
+            @endif
+        </fieldset>
+
+        <div class="flex items-center gap-3">
+            <button class="btn btn-primary">{{ __('Save') }}</button>
+
+            @if (session('status') === 'profile-updated')
+                <span
                     x-data="{ show: true }"
                     x-show="show"
                     x-transition
                     x-init="setTimeout(() => show = false, 2000)"
-                    class="text-sm text-gray-600"
-                >{{ __('Saved.') }}</p>
+                    class="badge badge-success badge-outline"
+                >{{ __('Saved.') }}</span>
             @endif
         </div>
     </form>
