@@ -35,7 +35,8 @@
       <li><a>Item 3</a></li>
     </ul>
   </div>
-  <div class="navbar-end">
-    <a class="btn">Button</a>
+  <div class="navbar-end gap-2">
+    <a href="{{ route('login') }}" class="btn btn-primary">Login</a>
+    <a href="{{ route('register') }}" class="btn btn-secondary">Register</a>
   </div>
 </div>
